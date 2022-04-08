@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Lista de tareas inmutable</title>
+</head>
+<body>
+    <div class="conteiner"> 
+        <h1>Interfaz basada en el Estado</h1>
+            <form action="" id="tarea-form">
+                <input type="text" id="todo-item" class="form_input" placeholder=" Tarea por hacer ">
+                <input type="submit" class="form_lebel" value="Agregar">
+            </form>
+        <h2>Lista de Tareas</h2>
+    <ul id="tarea-lista"></ul>
+
+
+
+    <script class="arreglo" >
+        const d = document;
+
+        //El State
+        const state = {
+            tareasLista: [],  //variable de tipo objeto
+            nombre: "Pedro" //agrego propiedad al estado
+        }
+
+        //Template UI
+        const template = () => {
+            if (template.datos.tareasLista.length < 1) { //si la longitud del atrubuto 'tareasLista' es menor a 1 entonces devulvo
+            return `<p>Tareas a Realizar</p>`; // string HTML
+            }
+
+            let tareas = template.datos.tareasLista.map(item => `<li>${item}</li>`).join(""); // recorre la lista  'items' a la lista
+
+            return tareas;
+        }
+
+        //declaro estado local
+        template.datos = {
+            tareasLista:[],
+        }
+
+        //pintado de la interfaz (Render UI)
+        
+        const render = () => {
+            console.log(template.datos);
+
+            const $list = d.getElementById("tarea-lista"); //
+            if (!$list) return; // si no hay lista no retorna nada
+            $list.innerHTML = template(); // de lo contrario le asigna el template con los 'item'
+        }
+
+        //actualizar el estado
+
+
+        const setState = obj => {
+        for (let key in obj) {
+            if (template.datos.hasOwnProperty(key)) {
+            template.datos[key] = obj[key];
+            }
+        }
+
+        render();
+        }
+
+
+        //otenemos copia inmutable del State
+        const getState = () => JSON.parse(JSON.stringify(template.datos));
+
+        //delegacion de evento
+
+        d.addEventListener("DOMContentLoaded", render);
+
+        //Valores por defecto al estado
+        setState({
+            tareasLista:["Nueva tarea1", "Nueva tarea2"]
+        });
+        
+        const items = getState(); 
+
+        items.tareasLista.push("Tareas 4") //agrega item
+
+    
+
+        
+
+        // console.log("Estado mutable",state)
+
+
+        d.addEventListener("submit", e => {    //Variable 'item'
+            if (!e.target.matches("#tarea-form")) return false;
+
+            e.preventDefault(); //procesa el formulario
+
+            const $item = d.getElementById("todo-item"); //input del formulario
+            if (!$item) return;
+
+            //Actualizar el State y la UI
+            const data = getState() //copia del estado anterior
+            data.tareasLista.push($item.value); //captura nuevos 'item'
+            setState({tareasLista:data.tareasLista}) //setea los nuevos valores
+            
+
+            //Limpiar el input
+            $item.value = "";
+            $item.focus();
+        });
+    </script>
+</div>
+
+
+</body>
+</html>

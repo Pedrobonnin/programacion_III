@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interfaz basada en el Estado</title>
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+
+
+<body>
+    <div class="conteiner"> 
+        <h1>Interfaz basada en el Estado</h1>
+            <form id="tarea-form">
+                <input type="text" id="todo-item" class="form_input" placeholder=" Tarea por hacer ">
+                <input type="submit" class="form_lebel" value="Agregar">
+            </form>
+        <h2>Lista de Tareas</h2>
+    <ul id="tarea-lista"></ul>
+
+    
+        <script class="arreglo" >
+            const d = document;
+
+            //El State
+            const state = {
+                tareasLista: [],  //variable de tipo objeto
+                nombre: ""
+            }
+
+            //Template UI
+            const template = () => {
+                if (state.tareasLista.length < 1) { //si la longitud del atrubuto 'tareasLista' es menor a 1 entonces devulvo
+                return `<p>Tareas a Realizar</p>`; // string HTML
+                }
+
+                let tareas = state.tareasLista.map(item => `<li>${item}</li>`).join(""); // recorre la lista  'items' a la lista
+
+                return tareas;
+            }
+
+            //pintado de la interfaz (Render UI)
+            
+            const render = () => {
+                console.log(state);
+
+                const $list = d.getElementById("tarea-lista"); //
+                if (!$list) return; // si no hay lista no retorna nada
+                $list.innerHTML = template(); // de lo contrario le asigna el template con los 'item'
+            }
+
+            //actualizar el estado deforma ractiva
+
+
+            const setState = obj => {
+            for (let key in obj) {
+                if (state.hasOwnProperty(key)) {// verifica que existe la llave dentro de state
+                state[key] = obj[key];  //entonces remplaza el valor por el que esta recibiendo.
+                }
+            }
+
+            render();
+            }
+
+            //delegacion de evento
+
+            d.addEventListener("DOMContentLoaded", render);
+
+            //Valores por defecto al estado
+            setState({
+                tareasLista:["Nuevatarea1", "Nuevatarea2"],
+                nombre:"pedro"
+            });
+            
+
+            d.addEventListener("submit", e => {    //Variable 'item'
+                if (!e.target.matches("#tarea-form")) return false;
+
+                e.preventDefault(); //procesa el formulario
+
+                const $item = d.getElementById("todo-item"); //input del formulario
+                if (!$item) return;
+
+                //Actualizar el State y la UI
+                state.tareasLista.push($item.value); //captura nuevos 'item'
+                render();
+
+                //Limpiar el input
+                $item.value = "";
+                $item.focus();
+            });
+        </script>
+    </div>
+     
+</body>
+
+</html>
